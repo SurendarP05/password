@@ -10,47 +10,37 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 
 
 from django.contrib.auth.hashers import make_password
+
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(max_length=120, write_only=True)
-    def create(self, validate_data):
-        print(validate_data)
-        validate_data['password'] = make_password(validate_data['password'])
-        user =  RegistrationModel.objects.create(**validate_data)
+
+    def validate_email(self, value):
+        if RegistrationModel.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email address is already registered.")
+        return value
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data['password'])
+        user = RegistrationModel.objects.create_user(**validated_data)
         return user
 
-from django.contrib.auth import authenticate 
-class MyLoginSerializer(serializers.ModelSerializer):
-   
-    class Meta:
-       model = MyLonginModel
-       fields = '__all__'
+class MyLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
 
     def validate(self, data):
         email = data.get("email")
-        password = data.get("passord")
+        password = data.get("password")
         if email and password:
-            user = authenticate(email=email, password=password)
-            if not user:
+            user = RegistrationModel.objects.get(email=email)
+            if user.check_password(password):
+                data['user'] = user
+            else:
                 raise serializers.ValidationError("Invalid User")
         else:
             raise serializers.ValidationError("Error")
-        data['user'] = user
-        # if not RegistrationModel.objects.filter(email = data['email'], password=data['password'] ).exists():
-        #     raise serializers.ValidationError("Account Not Fount")
         return data
-
-    def get_jwt(self, data):
-        user = RegistrationModel.objects.filter(email = data['email']).first()
-        if not user:
-            return Response({'message': 'Invalide Creditials'})
-        refresh = RefreshToken().for_user(user)
-        
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        
-        }
     
 class PasswordReSetMailSerializer(serializers.Serializer):
     email = serializers.EmailField()
