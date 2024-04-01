@@ -89,7 +89,7 @@ class PasswordResetSerializer(serializers.Serializer):
             raise serializers.ValidationError("Invalid reset link")
         else:
             user.set_password(password)
-            print(password, '66666666666666666666666666666666666666666')
+            print(password)
             user.save()
         return attrs
 

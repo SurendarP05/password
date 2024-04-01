@@ -60,14 +60,12 @@ class PasswordResetConfirmAPIView(GenericAPIView):
 
     def post(self, request, uid, token, *args, **kwargs):
         serializer = self.serializer_class(data=request.data, context={'uid': uid, 'token': token})
-        serializer.is_valid(raise_exception=True)  # Use raise_exception=True to raise a validation error
+        serializer.is_valid(raise_exception=True) 
         uid = urlsafe_base64_decode(uid).decode()
         try:
             instance = RegistrationModel.objects.get(pk=uid)
         except RegistrationModel.DoesNotExist:
             return Response({'error': 'Invalid reset link'}, status=400)
-
-        # Pass the instance to the serializer for updating
         serializer.update(instance, serializer.validated_data)
 
         return Response({'message': 'Password reset successfully'}, status=200)
