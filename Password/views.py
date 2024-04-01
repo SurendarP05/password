@@ -68,4 +68,5 @@ class PasswordResetConfirmAPIView(GenericAPIView):
             return Response({'error': 'Invalid reset link'}, status=400)
         serializer.update(instance, serializer.validated_data)
 
-        return Response({'message': 'Password reset successfully'}, status=200)
+        return Response({'message': 'Password reset successfully' ,'status_code':status.HTTP_200_OK}, status=200)
+        

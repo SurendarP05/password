@@ -44,7 +44,7 @@ class MyLoginSerializer(serializers.Serializer):
     
 class PasswordReSetMailSerializer(serializers.Serializer):
     email = serializers.EmailField()
-
+    
     def validate(self, attrs):
         email = attrs.get('email')
         if RegistrationModel.objects.filter(email=email).exists():  
@@ -83,7 +83,6 @@ class PasswordResetSerializer(serializers.Serializer):
         except RegistrationModel.DoesNotExist:
             raise serializers.ValidationError("Invalid reset link")
         except Exception as e:
-            print(e, "hjfciehijhidfhiehiheiheihei")
             raise serializers.ValidationError("Failed to reset password")
         if not PasswordResetTokenGenerator().check_token(user, token):
             raise serializers.ValidationError("Invalid reset link")
@@ -93,6 +92,5 @@ class PasswordResetSerializer(serializers.Serializer):
             user.save()
         return attrs
 
-    def update(self, instance, validated_data):
-        # No need to implement this method as we are updating existing instance
-        pass
+    # def update(self, instance, validated_data):
+    #     pass
