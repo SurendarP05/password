@@ -43,16 +43,7 @@ class PasswordResetMail(GenericAPIView):
             return Response({'mesaage':"A link has been sent your email to reset your password" ,'status_code':status.HTTP_200_OK})
         return Response({'error':serializer.errors,'status_code':status.HTTP_400_BAD_REQUEST})
     
-# class PasswordResetConfirmAPIView(GenericAPIView):
-#     queryset = RegistrationModel.objects.all()
-#     serializer_class = PasswordResetSerializer
-#     def post(self, request, uid, token, *args, **kwargs):
-#         serializer = self.serializer_class(data=request.data, context={'uid': uid, 'token': token})
-#         if serializer.is_valid():
-#             print(serializer, "------------------------------------------------------------------------------")
-#             serializer.save()
-#             return Response({'message': 'Password reset successfully'}, status=200)
-#         return Response(serializer.errors, status=400)
+
 
 class PasswordResetConfirmAPIView(GenericAPIView):
     queryset = RegistrationModel.objects.all()
